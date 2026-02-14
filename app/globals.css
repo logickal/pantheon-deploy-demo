@@ -1,26 +1,209 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Pantheon Brand Colors */
+  --pantheon-yellow: #FFDC28;
+  --pantheon-white: #FFFFFF;
+  --pantheon-purple: #3017A1;
+  --pantheon-black: #23232D;
+  --pantheon-pink: #DE0093;
+  --pantheon-mid-purple: #5F41E5;
+  --pantheon-light-purple: #D0C6FF;
+  --pantheon-green: #218C5F;
+  --pantheon-blue: #0F62FE;
+
+  --background: #0a0a0f;
+  --foreground: #ffffff;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Pantheon brand colors for Tailwind */
+  --color-pantheon-yellow: #FFDC28;
+  --color-pantheon-purple: #3017A1;
+  --color-pantheon-black: #23232D;
+  --color-pantheon-pink: #DE0093;
+  --color-pantheon-blue: #0F62FE;
+  --color-pantheon-green: #218C5F;
+  --color-pantheon-mid-purple: #5F41E5;
+  --color-pantheon-light-purple: #D0C6FF;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Poppins', system-ui, -apple-system, sans-serif;
+  font-weight: 600;
+}
+
+/* Typography */
+.font-display {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+}
+
+.font-body {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 600;
+}
+
+.font-serif {
+  font-family: 'Aleo', serif;
+}
+
+/* Smooth animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes traffic-flow {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes health-check {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+}
+
+@keyframes container-spawn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes container-fade {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0.2;
+    transform: scale(0.95);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out;
+}
+
+.animate-slide-left {
+  animation: slideFromLeft 0.6s ease-out;
+}
+
+.animate-slide-right {
+  animation: slideFromRight 0.6s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-traffic {
+  animation: traffic-flow 2s ease-in-out infinite;
+}
+
+.animate-health {
+  animation: health-check 1.5s ease-in-out infinite;
+}
+
+.animate-spawn {
+  animation: container-spawn 0.8s ease-out forwards;
+}
+
+.animate-fade-out {
+  animation: container-fade 0.8s ease-out forwards;
+}
+
+/* Gradient backgrounds */
+.bg-gradient-pantheon-dark {
+  background: linear-gradient(135deg, #23232D 0%, #3017A1 50%, #DE0093 100%);
+}
+
+.bg-gradient-pantheon-purple {
+  background: linear-gradient(135deg, #5F41E5 0%, #0F62FE 100%);
+}
+
+.bg-gradient-pantheon-multi {
+  background: linear-gradient(135deg, #FFDC28 0%, #DE0093 50%, #5F41E5 100%);
 }
