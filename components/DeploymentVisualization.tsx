@@ -9,6 +9,7 @@ import BuildingImage from './BuildingImage';
 
 interface DeploymentVisualizationProps {
   currentStep: DeploymentStep;
+  step4SubStep: number;
   onNext: () => void;
   onPrevious: () => void;
   isFirstStep: boolean;
@@ -17,6 +18,7 @@ interface DeploymentVisualizationProps {
 
 export default function DeploymentVisualization({
   currentStep,
+  step4SubStep,
   onNext,
   isLastStep,
 }: DeploymentVisualizationProps) {
@@ -96,19 +98,19 @@ export default function DeploymentVisualization({
             {/* Test Environment (Left Side) */}
             <div className={`absolute left-[5%] top-1/2 -translate-y-1/2 ${step >= 4 ? 'opacity-30' : 'opacity-100'} transition-opacity duration-500`}>
               {/* Environment box with border */}
-              <div className="relative border-2 border-[#5F41E5]/30 rounded-2xl p-16 bg-[#5F41E5]/5 backdrop-blur-sm">
+              <div className="relative border-2 border-[#5F41E5]/30 rounded-2xl p-16 pb-24 bg-[#5F41E5]/5 backdrop-blur-sm min-h-[480px]">
                 {/* Environment Label - Centered Above */}
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#23232D] border-2 border-[#5F41E5] rounded-lg">
                   <div className="text-xl font-bold text-[#5F41E5] tracking-wider">TEST</div>
                 </div>
 
                 {/* Test Load Balancer */}
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-8 -mt-4">
                   <LoadBalancer active={step >= 3} />
                 </div>
 
                 {/* Test Containers Area */}
-                <div className="relative min-h-[160px] flex items-end justify-center">
+                <div className="relative min-h-[240px] flex items-end justify-center">
                   {/* Old containers (fade out in step 3) */}
                   {step <= 2 && (
                     <div className="flex gap-4 justify-center items-end">
@@ -181,19 +183,19 @@ export default function DeploymentVisualization({
             {/* Live Environment (Right Side) */}
             <div className={`absolute right-[5%] top-1/2 -translate-y-1/2 ${step <= 3 ? 'opacity-30' : 'opacity-100'} transition-opacity duration-500`}>
               {/* Environment box with border */}
-              <div className="relative border-2 border-[#FFDC28]/30 rounded-2xl p-16 bg-[#FFDC28]/5 backdrop-blur-sm">
+              <div className="relative border-2 border-[#FFDC28]/30 rounded-2xl p-16 pb-24 bg-[#FFDC28]/5 backdrop-blur-sm min-h-[480px]">
                 {/* Environment Label - Centered Above */}
                 <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#23232D] border-2 border-[#FFDC28] rounded-lg">
                   <div className="text-xl font-bold text-[#FFDC28] tracking-wider">LIVE</div>
                 </div>
 
                 {/* Live Load Balancer */}
-                <div className="flex justify-center mb-8">
+                <div className="flex justify-center mb-8 -mt-4">
                   <LoadBalancer active={step >= 1} />
                 </div>
 
                 {/* Live Containers */}
-                <div className="relative flex flex-col gap-6 items-center min-h-[180px]">
+                <div className="relative flex flex-col gap-6 items-center min-h-[320px]">
                   {/* Old containers row */}
                   {getLiveOldContainerStates().length > 0 && (
                     <div className="flex gap-3 justify-center items-end">
@@ -208,37 +210,79 @@ export default function DeploymentVisualization({
                     </div>
                   )}
 
-                  {/* Step 4: Image deploying to new containers */}
+                  {/* Step 4: Multi-phase deployment */}
                   {step === 4 && (
                     <>
-                      {/* Build image animating down */}
-                      <div className="absolute top-0 left-1/2 -translate-x-1/2 animate-slide-down-deploy z-10">
-                        <BuildingImage />
-                      </div>
-
-                      {/* "Same Images" callout */}
-                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-fade-in z-20 whitespace-nowrap">
-                        <div className="px-6 py-3 bg-[#FFDC28]/20 border-2 border-[#FFDC28] rounded-xl backdrop-blur-sm">
-                          <div className="text-[#FFDC28] text-sm font-bold tracking-widest text-center">
-                            ⚡ SAME IMAGES FROM TEST
+                      {/* Sub-step 1-2: Banner and image icon */}
+                      {(step4SubStep === 1 || step4SubStep === 2) && (
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full flex flex-col items-center gap-8">
+                          {/* "Same Images" callout - fades in on sub-step 1, fades out on sub-step 2 */}
+                          <div className={`whitespace-nowrap ${step4SubStep === 1 ? 'animate-fade-in' : 'animate-fade-out'}`}>
+                            <div className="px-6 py-3 bg-[#FFDC28]/20 border-2 border-[#FFDC28] rounded-xl backdrop-blur-sm">
+                              <div className="text-[#FFDC28] text-sm font-bold tracking-widest text-center">
+                                ⚡ SAME IMAGES FROM TEST
+                              </div>
+                              <div className="text-gray-300 text-xs text-center mt-1">
+                                No rebuild · Guaranteed consistency
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-gray-300 text-xs text-center mt-1">
-                            No rebuild · Guaranteed consistency
+
+                          {/* Build image icon - static (already built) */}
+                          <div className={step4SubStep === 1 ? 'animate-fade-in' : ''}>
+                            <BuildingImage building={false} />
                           </div>
                         </div>
-                      </div>
+                      )}
 
-                      {/* New containers spawning */}
-                      <div className="flex gap-3 justify-center items-end">
-                        {Array(5).fill('building').map((state, i) => (
-                          <div key={`live-new-spawning-${i}`} className="relative">
-                            <Container state="building" delay={800 + i * 80} />
-                            {i === 0 && (
-                              <ImageBadge version="master" show={true} />
-                            )}
+                      {/* Sub-step 2 only: Container outlines appear, image deploys to each (after banner fades) */}
+                      {step4SubStep === 2 && (
+                        <>
+                          {/* Container outlines with image deploying animation - delayed to start after banner fade */}
+                          <div className="flex gap-3 justify-center items-end relative">
+                            {Array(5).fill('outline').map((_, i) => (
+                              <div key={`live-outline-${i}`} className="relative">
+                                {/* Container outline - starts appearing after banner fade (600ms delay) */}
+                                <div className="w-20 h-24 rounded-lg border-2 border-[#5F41E5]/40 bg-transparent animate-fade-in"
+                                     style={{ animationDelay: `${600 + i * 100}ms` }}>
+                                </div>
+
+                                {/* Small image icon deploying onto each container */}
+                                <div
+                                  className="absolute top-0 left-1/2 -translate-x-1/2 animate-slide-down-deploy z-10"
+                                  style={{ animationDelay: `${800 + i * 150}ms` }}
+                                >
+                                  <div className="w-8 h-8 rounded border border-[#FFDC28] bg-gradient-to-br from-[#5F41E5] to-[#3017A1] opacity-80"></div>
+                                </div>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        </>
+                      )}
+
+                      {/* Sub-step 3: Container image fades out, containers show building animation */}
+                      {step4SubStep === 3 && (
+                        <>
+                          {/* Container image fading out */}
+                          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-full flex flex-col items-center gap-8">
+                            <div className="animate-fade-out">
+                              <BuildingImage building={false} />
+                            </div>
+                          </div>
+
+                          {/* Containers showing repeating building animation */}
+                          <div className="flex gap-3 justify-center items-end">
+                            {Array(5).fill('building').map((state, i) => (
+                              <div key={`live-new-building-${i}`} className="relative">
+                                <Container state="building" delay={i * 100} />
+                                {i === 0 && (
+                                  <ImageBadge version="master" show={true} />
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
 

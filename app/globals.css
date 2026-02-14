@@ -157,6 +157,15 @@ body {
   }
 }
 
+@keyframes building-pulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
 @keyframes container-fade {
   from {
     opacity: 1;
@@ -220,6 +229,25 @@ body {
   }
 }
 
+@keyframes slide-down-deploy-slow {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  40% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(60px) scale(0.8);
+  }
+  70% {
+    opacity: 0.5;
+    transform: translateX(-50%) translateY(80px) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px) scale(0.2);
+  }
+}
+
 .animate-fill-up {
   animation: fill-up 2.5s ease-in-out infinite;
 }
@@ -230,6 +258,10 @@ body {
 
 .animate-slide-down-deploy {
   animation: slide-down-deploy 1.2s ease-out forwards;
+}
+
+.animate-slide-down-deploy-slow {
+  animation: slide-down-deploy-slow 2s ease-out forwards;
 }
 
 .animate-fade-in {
@@ -270,6 +302,10 @@ body {
 
 .animate-fade-in-container {
   animation: fade-in-container 1.5s ease-in-out forwards;
+}
+
+.animate-building-pulse {
+  animation: building-pulse 2s ease-in-out infinite;
 }
 
 /* Gradient backgrounds */

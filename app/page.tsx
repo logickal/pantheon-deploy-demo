@@ -7,14 +7,49 @@ import { deploymentSteps } from '@/data/deploymentSteps';
 
 export default function Home() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [step4SubStep, setStep4SubStep] = useState(0); // 0-3 for step 4 phases
 
   const handleNext = () => {
+    // Special handling for step 4 (index 3) which has sub-steps
+    if (currentStepIndex === 3) {
+      if (step4SubStep < 3) {
+        setStep4SubStep(step4SubStep + 1);
+        return;
+      } else {
+        // Move to step 5
+        setStep4SubStep(0);
+        setCurrentStepIndex(4);
+        return;
+      }
+    }
+
+    // Normal step advancement
     if (currentStepIndex < deploymentSteps.length - 1) {
       setCurrentStepIndex(currentStepIndex + 1);
     }
   };
 
   const handlePrevious = () => {
+    // Special handling for step 4 (index 3) which has sub-steps
+    if (currentStepIndex === 3) {
+      if (step4SubStep > 0) {
+        setStep4SubStep(step4SubStep - 1);
+        return;
+      } else {
+        // Move to step 3
+        setCurrentStepIndex(2);
+        return;
+      }
+    }
+
+    // Coming from step 5 back to step 4
+    if (currentStepIndex === 4) {
+      setCurrentStepIndex(3);
+      setStep4SubStep(3); // Go to last sub-step of step 4
+      return;
+    }
+
+    // Normal step going back
     if (currentStepIndex > 0) {
       setCurrentStepIndex(currentStepIndex - 1);
     }
@@ -22,6 +57,7 @@ export default function Home() {
 
   const handleReset = () => {
     setCurrentStepIndex(0);
+    setStep4SubStep(0);
   };
 
   // Enable keyboard navigation (arrow keys)
@@ -53,7 +89,10 @@ export default function Home() {
         {deploymentSteps.map((step, index) => (
           <button
             key={step.id}
-            onClick={() => setCurrentStepIndex(index)}
+            onClick={() => {
+              setCurrentStepIndex(index);
+              setStep4SubStep(0); // Reset sub-step when jumping
+            }}
             className={`h-2 rounded-full transition-all duration-500 ${
               index === currentStepIndex
                 ? 'bg-[#FFDC28] w-12 shadow-lg shadow-[#FFDC28]/50'
@@ -70,6 +109,7 @@ export default function Home() {
       {/* Main Visualization Area - Full Screen */}
       <DeploymentVisualization
         currentStep={currentStep}
+        step4SubStep={step4SubStep}
         onNext={handleNext}
         onPrevious={handlePrevious}
         isFirstStep={isFirstStep}

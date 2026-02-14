@@ -8,18 +8,18 @@ interface ContainerProps {
 
 export default function Container({ state, delay = 0, label }: ContainerProps) {
   const stateStyles = {
-    building: 'animate-spawn animate-fade-in-container',
+    building: 'animate-spawn animate-building-pulse',
     ready: 'opacity-80',
     active: 'opacity-100 shadow-[0_0_30px_rgba(255,220,40,0.6)]',
-    dimming: 'opacity-40 animate-fade-out',
-    retired: 'opacity-0',
+    dimming: 'opacity-50',
+    retired: 'opacity-0 animate-fade-out',
   };
 
   const glowStyles = {
     building: 'from-[#5F41E5] to-[#3017A1]',
     ready: 'from-[#5F41E5] to-[#3017A1]',
     active: 'from-[#FFDC28] to-[#DE0093]',
-    dimming: 'from-gray-500 to-gray-700',
+    dimming: 'from-gray-600 to-gray-800',
     retired: 'from-gray-800 to-gray-900',
   };
 
@@ -29,14 +29,14 @@ export default function Container({ state, delay = 0, label }: ContainerProps) {
       style={{ animationDelay: `${delay}ms` }}
     >
       {/* Container block */}
-      <div className={`w-full h-full rounded-lg bg-gradient-to-br ${glowStyles[state]} border-2 border-white/20 backdrop-blur-sm relative overflow-hidden`}>
+      <div className={`w-full h-full rounded-lg bg-gradient-to-br ${glowStyles[state]} border-2 ${state === 'dimming' ? 'border-gray-600/40' : 'border-white/20'} backdrop-blur-sm relative overflow-hidden`}>
         {/* Glow effect */}
-        <div className={`absolute inset-0 bg-gradient-to-br ${glowStyles[state]} opacity-50 blur-md ${state === 'active' ? 'animate-pulse-glow' : ''}`}></div>
+        <div className={`absolute inset-0 bg-gradient-to-br ${glowStyles[state]} ${state === 'dimming' ? 'opacity-20' : 'opacity-50'} blur-md ${state === 'active' || state === 'building' ? 'animate-pulse-glow' : ''}`}></div>
 
         {/* Container icon/detail */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-12 h-12 border-2 border-white/40 rounded flex items-center justify-center">
-            <div className="w-8 h-8 border border-white/30 rounded-sm"></div>
+          <div className={`w-12 h-12 border-2 ${state === 'dimming' ? 'border-gray-500/30' : 'border-white/40'} rounded flex items-center justify-center`}>
+            <div className={`w-8 h-8 border ${state === 'dimming' ? 'border-gray-500/20' : 'border-white/30'} rounded-sm`}></div>
           </div>
         </div>
 
