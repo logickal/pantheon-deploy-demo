@@ -8,7 +8,7 @@ interface ContainerProps {
 
 export default function Container({ state, delay = 0, label }: ContainerProps) {
   const stateStyles = {
-    building: 'opacity-60 animate-spawn',
+    building: 'animate-spawn animate-fade-in-container',
     ready: 'opacity-80',
     active: 'opacity-100 shadow-[0_0_30px_rgba(255,220,40,0.6)]',
     dimming: 'opacity-40 animate-fade-out',

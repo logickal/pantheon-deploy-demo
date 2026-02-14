@@ -12,7 +12,7 @@ export default function ImageBadge({ version, show }: ImageBadgeProps) {
     <div className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap animate-fade-in">
       <div className="px-3 py-1 bg-[#3017A1]/80 border border-[#FFDC28]/40 rounded-full backdrop-blur-sm">
         <div className="text-[#FFDC28] text-xs font-mono font-bold">
-          v{version}
+          {version}
         </div>
       </div>
     </div>

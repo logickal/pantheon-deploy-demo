@@ -148,14 +148,23 @@ body {
   }
 }
 
+@keyframes fade-in-container {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @keyframes container-fade {
   from {
     opacity: 1;
     transform: scale(1);
   }
   to {
-    opacity: 0.3;
-    transform: scale(0.95);
+    opacity: 0;
+    transform: scale(0.8);
   }
 }
 
@@ -166,6 +175,61 @@ body {
   50% {
     box-shadow: 0 0 40px rgba(255, 220, 40, 0.6);
   }
+}
+
+@keyframes fill-up {
+  0% {
+    height: 0%;
+  }
+  100% {
+    height: 100%;
+  }
+}
+
+@keyframes sparkle {
+  0% {
+    opacity: 0;
+    transform: translateY(15px) scale(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-8px) scale(2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-25px) scale(0);
+  }
+}
+
+@keyframes slide-down-deploy {
+  0% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(60px) scale(0.8);
+  }
+  80% {
+    opacity: 0.5;
+    transform: translateX(-50%) translateY(80px) scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100px) scale(0.2);
+  }
+}
+
+.animate-fill-up {
+  animation: fill-up 2.5s ease-in-out infinite;
+}
+
+.animate-sparkle {
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.animate-slide-down-deploy {
+  animation: slide-down-deploy 1.2s ease-out forwards;
 }
 
 .animate-fade-in {
@@ -197,11 +261,15 @@ body {
 }
 
 .animate-spawn {
-  animation: container-spawn 0.8s ease-out forwards;
+  animation: container-spawn 1s ease-out forwards;
 }
 
 .animate-fade-out {
-  animation: container-fade 0.8s ease-out forwards;
+  animation: container-fade 1s ease-out forwards;
+}
+
+.animate-fade-in-container {
+  animation: fade-in-container 1.5s ease-in-out forwards;
 }
 
 /* Gradient backgrounds */

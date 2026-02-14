@@ -5,6 +5,7 @@ import Container from './Container';
 import LoadBalancer from './LoadBalancer';
 import TrafficFlow from './TrafficFlow';
 import ImageBadge from './ImageBadge';
+import BuildingImage from './BuildingImage';
 
 interface DeploymentVisualizationProps {
   currentStep: DeploymentStep;
@@ -25,16 +26,22 @@ export default function DeploymentVisualization({
   // Camera positioning based on step
   const getCameraTransform = () => {
     if (step === 1) return 'scale(0.7)'; // Zoomed out - see both
-    if (step === 2 || step === 3) return 'scale(1.2) translateX(-35%)'; // Zoomed into Test
-    if (step >= 4) return 'scale(1.2) translateX(35%)'; // Zoomed into Live
+    if (step === 2 || step === 3) return 'scale(1.0) translateX(30%)'; // Zoomed into Test (left side)
+    if (step >= 4) return 'scale(1.0) translateX(-25%)'; // Zoomed into Live (right side, centered)
     return 'scale(1)';
   };
 
   // Determine container states for Test environment
   const getTestContainerStates = () => {
     if (step === 1) return Array(2).fill('active');
-    if (step === 2) return Array(2).fill('dimming'); // Old being replaced
+    if (step === 2) return Array(2).fill('active'); // Still active during build
     if (step >= 3) return Array(2).fill('active'); // New containers
+    return [];
+  };
+
+  const getTestOldContainerStates = () => {
+    if (step <= 2) return [];
+    if (step === 3) return Array(2).fill('retired'); // Old containers disappearing
     return [];
   };
 
@@ -87,106 +94,174 @@ export default function DeploymentVisualization({
             style={{ transform: getCameraTransform() }}
           >
             {/* Test Environment (Left Side) */}
-            <div className={`absolute left-[10%] top-1/2 -translate-y-1/2 ${step >= 4 ? 'opacity-30' : 'opacity-100'} transition-opacity duration-500`}>
-              <div className="text-center mb-8">
-                <div className="text-sm font-bold text-[#5F41E5] tracking-widest mb-2">TEST ENVIRONMENT</div>
-              </div>
-
-              {/* Test Load Balancer */}
-              <div className="flex justify-center mb-8">
-                <LoadBalancer active={step >= 3} />
-              </div>
-
-              {/* Test Containers */}
-              <div className="flex gap-4 justify-center items-end">
-                {getTestContainerStates().map((state, i) => (
-                  <div key={`test-${i}`} className="relative">
-                    <Container state={state as any} delay={i * 100} />
-                    {step >= 3 && i === 0 && (
-                      <ImageBadge version="2.1.0" show={true} />
-                    )}
-                    {step >= 3 && step <= 5 && (
-                      <TrafficFlow active={true} delay={i * 200} />
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {step === 2 && (
-                <div className="mt-8 text-center">
-                  <div className="inline-block px-4 py-2 bg-[#5F41E5]/30 rounded-lg border border-[#FFDC28]/30">
-                    <div className="text-[#FFDC28] text-xs font-mono">Building Images...</div>
-                  </div>
+            <div className={`absolute left-[5%] top-1/2 -translate-y-1/2 ${step >= 4 ? 'opacity-30' : 'opacity-100'} transition-opacity duration-500`}>
+              {/* Environment box with border */}
+              <div className="relative border-2 border-[#5F41E5]/30 rounded-2xl p-16 bg-[#5F41E5]/5 backdrop-blur-sm">
+                {/* Environment Label - Centered Above */}
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#23232D] border-2 border-[#5F41E5] rounded-lg">
+                  <div className="text-xl font-bold text-[#5F41E5] tracking-wider">TEST</div>
                 </div>
-              )}
+
+                {/* Test Load Balancer */}
+                <div className="flex justify-center mb-8">
+                  <LoadBalancer active={step >= 3} />
+                </div>
+
+                {/* Test Containers Area */}
+                <div className="relative min-h-[160px] flex items-end justify-center">
+                  {/* Old containers (fade out in step 3) */}
+                  {step <= 2 && (
+                    <div className="flex gap-4 justify-center items-end">
+                      {getTestContainerStates().map((state, i) => (
+                        <div key={`test-old-${i}`} className="relative">
+                          <Container state={state as any} delay={i * 100} />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Step 3: Image deploying animation */}
+                  {step === 3 && (
+                    <>
+                      {/* Old containers fading */}
+                      <div className="absolute bottom-0 flex gap-4 justify-center items-end animate-fade-out">
+                        {Array(2).fill('dimming').map((state, i) => (
+                          <div key={`test-fading-${i}`} className="relative">
+                            <Container state={state as any} delay={0} />
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Build image animating down */}
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 animate-slide-down-deploy">
+                        <BuildingImage />
+                      </div>
+
+                      {/* New containers spawning */}
+                      <div className="flex gap-4 justify-center items-end">
+                        {getTestContainerStates().map((state, i) => (
+                          <div key={`test-new-${i}`} className="relative">
+                            <Container state="building" delay={800 + i * 100} />
+                            {i === 0 && (
+                              <ImageBadge version="master" show={true} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Step 4+: New containers active */}
+                  {step >= 4 && (
+                    <div className="flex gap-4 justify-center items-end">
+                      {getTestContainerStates().map((state, i) => (
+                        <div key={`test-${i}`} className="relative">
+                          <Container state={state as any} delay={i * 100} />
+                          {i === 0 && (
+                            <ImageBadge version="master" show={true} />
+                          )}
+                          {step >= 3 && step <= 5 && (
+                            <TrafficFlow active={true} delay={i * 200} />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Build image only shows in step 2 */}
+                {step === 2 && (
+                  <div className="mt-12 text-center">
+                    <BuildingImage />
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Live Environment (Right Side) */}
-            <div className={`absolute right-[10%] top-1/2 -translate-y-1/2 ${step <= 3 ? 'opacity-30' : 'opacity-100'} transition-opacity duration-500`}>
-              <div className="text-center mb-8">
-                <div className="text-sm font-bold text-[#FFDC28] tracking-widest mb-2">LIVE ENVIRONMENT</div>
-              </div>
+            <div className={`absolute right-[5%] top-1/2 -translate-y-1/2 ${step <= 3 ? 'opacity-30' : 'opacity-100'} transition-opacity duration-500`}>
+              {/* Environment box with border */}
+              <div className="relative border-2 border-[#FFDC28]/30 rounded-2xl p-16 bg-[#FFDC28]/5 backdrop-blur-sm">
+                {/* Environment Label - Centered Above */}
+                <div className="absolute -top-5 left-1/2 -translate-x-1/2 px-6 py-2 bg-[#23232D] border-2 border-[#FFDC28] rounded-lg">
+                  <div className="text-xl font-bold text-[#FFDC28] tracking-wider">LIVE</div>
+                </div>
 
-              {/* Live Load Balancer */}
-              <div className="flex justify-center mb-8">
-                <LoadBalancer active={step >= 1} />
-              </div>
+                {/* Live Load Balancer */}
+                <div className="flex justify-center mb-8">
+                  <LoadBalancer active={step >= 1} />
+                </div>
 
-              {/* Live Containers */}
-              <div className="flex flex-col gap-6 items-center">
-                {/* Old containers row */}
-                {getLiveOldContainerStates().length > 0 && (
-                  <div className="flex gap-3 justify-center items-end">
-                    {getLiveOldContainerStates().map((state, i) => (
-                      <div key={`live-old-${i}`} className="relative">
-                        <Container state={state as any} delay={i * 80} />
-                        {(step <= 5 || step === 6) && state !== 'retired' && (
-                          <TrafficFlow active={step <= 5} delay={i * 150} />
-                        )}
+                {/* Live Containers */}
+                <div className="relative flex flex-col gap-6 items-center min-h-[180px]">
+                  {/* Old containers row */}
+                  {getLiveOldContainerStates().length > 0 && (
+                    <div className="flex gap-3 justify-center items-end">
+                      {getLiveOldContainerStates().map((state, i) => (
+                        <div key={`live-old-${i}`} className="relative">
+                          <Container state={state as any} delay={i * 80} />
+                          {(step <= 5 || step === 6) && state !== 'retired' && (
+                            <TrafficFlow active={step <= 5} delay={i * 150} />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Step 4: Image deploying to new containers */}
+                  {step === 4 && (
+                    <>
+                      {/* Build image animating down */}
+                      <div className="absolute top-0 left-1/2 -translate-x-1/2 animate-slide-down-deploy z-10">
+                        <BuildingImage />
                       </div>
-                    ))}
-                  </div>
-                )}
 
-                {/* New containers row */}
-                {getLiveNewContainerStates().length > 0 && (
-                  <div className="flex gap-3 justify-center items-end">
-                    {getLiveNewContainerStates().map((state, i) => (
-                      <div key={`live-new-${i}`} className="relative">
-                        <Container state={state as any} delay={i * 80} />
-                        {step >= 4 && i === 0 && (
-                          <ImageBadge version="2.1.0" show={true} />
-                        )}
-                        {step >= 6 && (
-                          <TrafficFlow active={true} delay={i * 150} />
-                        )}
+                      {/* "Same Images" callout */}
+                      <div className="absolute -top-12 left-1/2 -translate-x-1/2 animate-fade-in z-20 whitespace-nowrap">
+                        <div className="px-6 py-3 bg-[#FFDC28]/20 border-2 border-[#FFDC28] rounded-xl backdrop-blur-sm">
+                          <div className="text-[#FFDC28] text-sm font-bold tracking-widest text-center">
+                            ⚡ SAME IMAGES FROM TEST
+                          </div>
+                          <div className="text-gray-300 text-xs text-center mt-1">
+                            No rebuild · Guaranteed consistency
+                          </div>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+
+                      {/* New containers spawning */}
+                      <div className="flex gap-3 justify-center items-end">
+                        {Array(5).fill('building').map((state, i) => (
+                          <div key={`live-new-spawning-${i}`} className="relative">
+                            <Container state="building" delay={800 + i * 80} />
+                            {i === 0 && (
+                              <ImageBadge version="master" show={true} />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  {/* Steps 5+: New containers active */}
+                  {step >= 5 && getLiveNewContainerStates().length > 0 && (
+                    <div className="flex gap-3 justify-center items-end">
+                      {getLiveNewContainerStates().map((state, i) => (
+                        <div key={`live-new-${i}`} className="relative">
+                          <Container state={state as any} delay={i * 80} />
+                          {i === 0 && (
+                            <ImageBadge version="master" show={true} />
+                          )}
+                          {step >= 6 && (
+                            <TrafficFlow active={true} delay={i * 150} />
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
-            {/* Center indicator for wide view */}
-            {step === 1 && (
-              <div className="absolute top-8 left-1/2 -translate-x-1/2">
-                <div className="text-gray-400 text-sm font-mono">← TEST | LIVE →</div>
-              </div>
-            )}
-
-            {/* Same Images Callout */}
-            {step === 4 && (
-              <div className="absolute top-1/4 left-1/2 -translate-x-1/2 animate-fade-in">
-                <div className="px-6 py-3 bg-[#FFDC28]/20 border-2 border-[#FFDC28] rounded-xl backdrop-blur-sm">
-                  <div className="text-[#FFDC28] text-sm font-bold tracking-widest text-center">
-                    ⚡ SAME IMAGES FROM TEST
-                  </div>
-                  <div className="text-gray-300 text-xs text-center mt-1">
-                    No rebuild · Guaranteed consistency
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Click hint */}
