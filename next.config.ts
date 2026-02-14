@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  cacheHandler: require.resolve('./cacheHandler.mjs'),
+  cacheMaxMemorySize: 0, // Disable in-memory caching to use custom handler
 };
 
 export default nextConfig;

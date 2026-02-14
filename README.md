@@ -91,6 +91,103 @@ All animations are defined in `app/globals.css` using `@keyframes`. Key animatio
 - `slide-down-deploy` - Image deployment animation
 - `traffic-flow` - Traffic flow animation
 
+## Deployment to Pantheon
+
+This project is configured for deployment to Pantheon's Front-End Sites platform using Git tags.
+
+### Prerequisites
+
+- Next.js 15.x (currently using 15.5.12)
+- Pantheon cache handler configured
+- Git repository connected to Pantheon
+
+### Configuration Files
+
+- **cacheHandler.mjs** - Pantheon cache handler for CDN optimization
+- **next.config.ts** - Cache handler integration
+- **project.toml** - Google Cloud Buildpacks configuration
+- **package.json** - Postinstall script for automatic builds
+
+### Deployment Process
+
+Pantheon uses **Git tags** to trigger deployments. Tags must follow the pattern `pantheon_{env}_{number}`.
+
+#### Deploy to Test Environment
+
+```bash
+# Find next tag number
+git tag | grep pantheon_test | sort -V
+
+# Create and push tag
+git tag pantheon_test_1
+git push deployment pantheon_test_1
+git push origin pantheon_test_1
+```
+
+#### Deploy to Live Environment
+
+```bash
+# Find next tag number
+git tag | grep pantheon_live | sort -V
+
+# Create and push tag
+git tag pantheon_live_1
+git push deployment pantheon_live_1
+git push origin pantheon_live_1
+```
+
+### Important Notes
+
+1. **Postinstall Script**: The `postinstall` script in package.json automatically runs `next build` after `yarn install`. This is required because Pantheon runs `yarn install` then `yarn start` without explicitly running build.
+
+2. **CSS Dependencies**: Tailwind CSS and PostCSS are in `dependencies` (not `devDependencies`) because they're required at build time.
+
+3. **Next.js 15.x Required**: Do not upgrade to Next.js 16.x until Turbopack symlink issues with Google Cloud Buildpacks are resolved.
+
+4. **Cache Handler**: The Pantheon cache handler automatically:
+   - Uses GCS bucket for cache storage in production
+   - Falls back to file-based caching in development
+   - Clears edge/CDN cache on deployments
+   - Provides tag-based cache invalidation
+
+5. **Build Command**: Production builds should NOT use `--turbopack` flag. The build script uses standard Webpack bundling for compatibility.
+
+### Environment Variables
+
+These are automatically provided by Pantheon:
+- `CACHE_BUCKET` - GCS bucket for cache storage
+- `OUTBOUND_PROXY_ENDPOINT` - Edge cache proxy for CDN clearing
+- `NODE_ENV=production` - Set via project.toml
+
+### Verification
+
+After deployment, verify the site is working:
+
+```bash
+# Check cache headers
+curl -I https://your-site.pantheonsite.io/
+
+# Test the application
+open https://your-site.pantheonsite.io/
+```
+
+### Troubleshooting
+
+**Build fails with "Could not find a production build"**
+- Ensure `postinstall` script exists in package.json
+
+**Build fails with "Cannot find module '@tailwindcss/postcss'"**
+- Ensure CSS dependencies are in `dependencies`, not `devDependencies`
+
+**Old content still showing after deployment**
+- Hard refresh browser (Cmd+Shift+R / Ctrl+Shift+R)
+- Verify `OUTBOUND_PROXY_ENDPOINT` is set (contact Pantheon support if missing)
+- Cache handler should automatically clear CDN on deployments
+
+**Turbopack symlink errors**
+- Ensure you're using Next.js 15.x (not 16.x)
+- Remove `--turbopack` flag from build script
+
 ## License
 
 Proprietary - Pantheon Systems, Inc.

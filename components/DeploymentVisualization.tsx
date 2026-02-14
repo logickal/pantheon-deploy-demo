@@ -23,7 +23,6 @@ export default function DeploymentVisualization({
   isLastStep,
 }: DeploymentVisualizationProps) {
   const step = currentStep.id;
-  const visualState = currentStep.visualState;
 
   // Camera positioning based on step
   const getCameraTransform = () => {
@@ -41,11 +40,6 @@ export default function DeploymentVisualization({
     return [];
   };
 
-  const getTestOldContainerStates = () => {
-    if (step <= 2) return [];
-    if (step === 3) return Array(2).fill('retired'); // Old containers disappearing
-    return [];
-  };
 
   // Determine container states for Live environment
   const getLiveOldContainerStates = () => {
@@ -116,7 +110,7 @@ export default function DeploymentVisualization({
                     <div className="flex gap-4 justify-center items-end">
                       {getTestContainerStates().map((state, i) => (
                         <div key={`test-old-${i}`} className="relative">
-                          <Container state={state as any} delay={i * 100} />
+                          <Container state={state as 'active'} delay={i * 100} />
                         </div>
                       ))}
                     </div>
@@ -129,7 +123,7 @@ export default function DeploymentVisualization({
                       <div className="absolute bottom-0 flex gap-4 justify-center items-end animate-fade-out">
                         {Array(2).fill('dimming').map((state, i) => (
                           <div key={`test-fading-${i}`} className="relative">
-                            <Container state={state as any} delay={0} />
+                            <Container state={state as 'dimming'} delay={0} />
                           </div>
                         ))}
                       </div>
@@ -158,7 +152,7 @@ export default function DeploymentVisualization({
                     <div className="flex gap-4 justify-center items-end">
                       {getTestContainerStates().map((state, i) => (
                         <div key={`test-${i}`} className="relative">
-                          <Container state={state as any} delay={i * 100} />
+                          <Container state={state as 'active'} delay={i * 100} />
                           {i === 0 && (
                             <ImageBadge version="master" show={true} />
                           )}
@@ -201,7 +195,7 @@ export default function DeploymentVisualization({
                     <div className="flex gap-3 justify-center items-end">
                       {getLiveOldContainerStates().map((state, i) => (
                         <div key={`live-old-${i}`} className="relative">
-                          <Container state={state as any} delay={i * 80} />
+                          <Container state={state as 'active' | 'dimming' | 'retired'} delay={i * 80} />
                           {(step <= 5 || step === 6) && state !== 'retired' && (
                             <TrafficFlow active={step <= 5} delay={i * 150} />
                           )}
@@ -291,7 +285,7 @@ export default function DeploymentVisualization({
                     <div className="flex gap-3 justify-center items-end">
                       {getLiveNewContainerStates().map((state, i) => (
                         <div key={`live-new-${i}`} className="relative">
-                          <Container state={state as any} delay={i * 80} />
+                          <Container state={state as 'building' | 'ready' | 'active'} delay={i * 80} />
                           {i === 0 && (
                             <ImageBadge version="master" show={true} />
                           )}

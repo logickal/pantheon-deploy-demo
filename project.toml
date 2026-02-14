@@ -1,0 +1,6 @@
+# Pantheon Front-End Sites Configuration
+# This file configures the Google Cloud Buildpacks environment
+
+[[build.env]]
+name = "NODE_ENV"
+value = "production"
