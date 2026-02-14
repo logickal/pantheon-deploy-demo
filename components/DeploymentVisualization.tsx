@@ -74,7 +74,7 @@ export default function DeploymentVisualization({
           <h2 className="text-7xl font-display text-white tracking-tight leading-tight">
             {currentStep.title}
           </h2>
-          <p className="text-2xl text-gray-300 max-w-3xl mx-auto font-body leading-relaxed">
+          <p className="text-2xl text-gray-300 max-w-3xl mx-auto font-body leading-relaxed whitespace-pre-line">
             {currentStep.description}
           </p>
         </div>
@@ -105,6 +105,13 @@ export default function DeploymentVisualization({
 
                 {/* Test Containers Area */}
                 <div className="relative min-h-[240px] flex items-end justify-center">
+                  {/* Build image only shows in step 2 - positioned in upper center, smaller */}
+                  {step === 2 && (
+                    <div className="absolute top-8 left-1/2 -translate-x-1/2 scale-75">
+                      <BuildingImage />
+                    </div>
+                  )}
+
                   {/* Old containers (fade out in step 3) */}
                   {step <= 2 && (
                     <div className="flex gap-4 justify-center items-end">
@@ -164,13 +171,6 @@ export default function DeploymentVisualization({
                     </div>
                   )}
                 </div>
-
-                {/* Build image only shows in step 2 */}
-                {step === 2 && (
-                  <div className="mt-12 text-center">
-                    <BuildingImage />
-                  </div>
-                )}
               </div>
             </div>
 

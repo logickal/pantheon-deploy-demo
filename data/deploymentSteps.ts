@@ -4,7 +4,7 @@ export const deploymentSteps: DeploymentStep[] = [
   {
     id: 1,
     title: 'Initial State',
-    description: 'Live environment: 5 containers serving production traffic. Test environment: 2 containers running.',
+    description: 'Live environment: 5 containers serving production traffic.\nTest environment: 2 containers running.',
     visualState: {
       phase: 'stable',
       liveContainers: { old: 5, new: 0 },
@@ -46,7 +46,7 @@ export const deploymentSteps: DeploymentStep[] = [
   {
     id: 5,
     title: 'Parallel Execution',
-    description: 'Both sets running. Old containers serve traffic. New containers ready. Zero downtime.',
+    description: 'Both sets running. Old containers serve traffic. New containers ready.',
     visualState: {
       phase: 'parallel',
       liveContainers: { old: 5, new: 5, newState: 'ready' },
@@ -57,7 +57,7 @@ export const deploymentSteps: DeploymentStep[] = [
   {
     id: 6,
     title: 'Traffic Cutover',
-    description: 'Load balancer seamlessly switches traffic. New containers light up, old containers go idle.',
+    description: 'Load balancer seamlessly switches traffic from old containers to the new containers with zero downtime.',
     visualState: {
       phase: 'switching',
       liveContainers: { old: 5, new: 5, oldState: 'dimming' },
@@ -69,7 +69,7 @@ export const deploymentSteps: DeploymentStep[] = [
   {
     id: 7,
     title: 'Deployment Complete',
-    description: 'Old containers retired. New containers serving all production traffic. Zero-downtime achieved.',
+    description: 'Old containers retired. New containers serving all production traffic. Deployment process complete.',
     visualState: {
       phase: 'complete',
       liveContainers: { old: 0, new: 5 },
