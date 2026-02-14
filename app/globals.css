@@ -195,6 +195,19 @@ body {
   }
 }
 
+@keyframes slide-up-to-center {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-120px);
+  }
+}
+
+.animate-slide-up-to-center {
+  animation: slide-up-to-center 1s ease-out forwards;
+}
+
 @keyframes sparkle {
   0% {
     opacity: 0;

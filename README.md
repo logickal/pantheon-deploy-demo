@@ -64,13 +64,13 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ### Deployment Steps
 
-1. **Initial State** - Shows active Live environment
-2. **Build Container Images** - Image building in Test environment
+1. **Initial State** - Shows active Live and Test environments
+2. **Build Container Images** - Image building in Test environment (smaller icon, top-center)
 3. **Deployed to Test** - New containers deployed and tested
 4. **Live Deployment Begins** - Multi-phase deployment to Live (4 sub-steps)
 5. **Parallel Execution** - Old and new containers running together
-6. **Traffic Cutover** - Traffic switches to new containers, old containers dim
-7. **Deployment Complete** - Old containers retired, deployment finished
+6. **Traffic Cutover** - Traffic switches to new containers with zero downtime, old containers dim
+7. **Deployment Complete** - Old containers retired, new containers slide up to center position
 
 ## Customization
 
@@ -88,8 +88,9 @@ Defined in `app/globals.css`:
 All animations are defined in `app/globals.css` using `@keyframes`. Key animations:
 - `container-spawn` - Container appearing
 - `building-pulse` - Building state pulse
-- `slide-down-deploy` - Image deployment animation
+- `slide-down-deploy` - Image deployment animation (Step 3)
 - `traffic-flow` - Traffic flow animation
+- `slide-up-to-center` - New containers slide up to center position (Step 7)
 
 ## Deployment to Pantheon
 

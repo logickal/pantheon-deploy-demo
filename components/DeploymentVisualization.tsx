@@ -282,7 +282,7 @@ export default function DeploymentVisualization({
 
                   {/* Steps 5+: New containers active */}
                   {step >= 5 && getLiveNewContainerStates().length > 0 && (
-                    <div className="flex gap-3 justify-center items-end">
+                    <div className={`flex gap-3 justify-center items-end ${step === 7 ? 'animate-slide-up-to-center' : ''}`}>
                       {getLiveNewContainerStates().map((state, i) => (
                         <div key={`live-new-${i}`} className="relative">
                           <Container state={state as 'building' | 'ready' | 'active'} delay={i * 80} />
