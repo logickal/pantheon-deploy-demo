@@ -10,6 +10,27 @@ This demo illustrates Pantheon's unique deployment workflow across Test and Live
 - Rolling deployments with traffic cutover
 - Zero-downtime during production deployments
 
+## Current Status
+
+**Repository**: https://github.com/logickal/pantheon-deploy-demo
+**Deployment**: ✓ Successfully deploying to Pantheon Front-End Sites
+**Last Updated**: February 14, 2026
+
+### Deployment Configuration Notes
+
+This application successfully deploys to Pantheon with the following configuration:
+- **Next.js Version**: 15.5.10 (aligned with working scoping-tool-poc)
+- **Turbopack Root**: Configured in `next.config.ts` to prevent workspace detection issues
+- **Cache Handler**: Pantheon cache handler for GCS bucket and edge cache clearing
+- **Build Process**: `postinstall` script runs `next build` automatically
+
+**Important**: The configuration was aligned with the working `scoping-tool-poc` repository to resolve deployment issues. Three changes were made simultaneously:
+1. Next.js version downgrade (15.5.12 → 15.5.10)
+2. Added turbopack root configuration
+3. Standardized .gitignore patterns
+
+The deployment succeeded after these changes, though it's unclear which specific change resolved the issue. Future troubleshooting should test changes individually.
+
 ## Features
 
 - **7-Step Deployment Flow**: Walk through the complete deployment process from initial state to completion
