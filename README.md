@@ -212,4 +212,4 @@ open https://your-site.pantheonsite.io/
 
 ## License
 
-Proprietary - Pantheon Systems, Inc.
+This is a Proprietary repository - Pantheon Systems, Inc.
