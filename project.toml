@@ -4,3 +4,7 @@
 [[build.env]]
 name = "NODE_ENV"
 value = "production"
+
+[[build.env]]
+name = "NEXT_TELEMETRY_DISABLED"
+value = "1"
