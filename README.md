@@ -210,7 +210,25 @@ open https://your-site.pantheonsite.io/
 - Ensure you're using Next.js 15.x (not 16.x)
 - Remove `--turbopack` flag from build script
 
+## TODO: Generalization
+
+**Status**: Fully Generic (100% complete)
+
+The code is already fully generic with no customer-specific references.
+
+Remaining tasks before pantheon-se org migration:
+
+- [x] Code is fully generic - no changes needed
+- [ ] Transfer repository from personal account (logickal) to pantheon-se org
+- [ ] Update repository settings and access permissions
+- [ ] Update deployment remotes if needed
+
+**Effort Estimate**: Already complete (code), 5 minutes for repo transfer
+
+See `GENERALIZATION-ANALYSIS.md` in parent directory for full details.
+
+---
+
 ## License
 
 This is a Proprietary repository - Pantheon Systems, Inc.
-Kick another build and build again
